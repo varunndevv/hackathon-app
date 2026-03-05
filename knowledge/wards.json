@@ -1,0 +1,145 @@
+{
+  "wards": [
+    {
+      "id": 1,
+      "name": "Basavanagudi",
+      "ward_no": "152",
+      "zone": "residential",
+      "center_lat": 12.9432,
+      "center_lon": 77.5731,
+      "landmarks": [
+        { "name": "BMSCE", "type": "educational", "priority_boost": "P1", "lat": 12.9422, "lng": 77.5763 },
+        { "name": "Bull Temple", "type": "heritage", "priority_boost": "P2", "lat": 12.9424, "lng": 77.5709 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Jayanagar",
+      "ward_no": "153",
+      "zone": "residential",
+      "center_lat": 12.9299,
+      "center_lon": 77.5836,
+      "landmarks": [
+        { "name": "Jayanagar General Hospital", "type": "hospital", "priority_boost": "P1", "lat": 12.9254, "lng": 77.5832 },
+        { "name": "Jayanagar Shopping Complex", "type": "commercial", "priority_boost": "P2", "lat": 12.9308, "lng": 77.5824 }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Koramangala",
+      "ward_no": "151",
+      "zone": "commercial",
+      "center_lat": 12.9352,
+      "center_lon": 77.6245,
+      "landmarks": [
+        { "name": "Manipal Hospital", "type": "hospital", "priority_boost": "P1", "lat": 12.9390, "lng": 77.6272 },
+        { "name": "Forum Mall", "type": "commercial", "priority_boost": "P2", "lat": 12.9338, "lng": 77.6107 }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Indiranagar",
+      "ward_no": "84",
+      "zone": "commercial",
+      "center_lat": 12.9784,
+      "center_lon": 77.6408,
+      "landmarks": [
+        { "name": "CMR Institute", "type": "educational", "priority_boost": "P1", "lat": 12.9854, "lng": 77.6408 },
+        { "name": "100 Feet Road", "type": "arterial_road", "priority_boost": "P2", "lat": 12.9784, "lng": 77.6408 }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Whitefield",
+      "ward_no": "102",
+      "zone": "industrial",
+      "center_lat": 12.9698,
+      "center_lon": 77.7500,
+      "landmarks": [
+        { "name": "Vydehi Hospital", "type": "hospital", "priority_boost": "P1", "lat": 12.9698, "lng": 77.7390 },
+        { "name": "ITPL Tech Park", "type": "industrial", "priority_boost": "P2", "lat": 12.9856, "lng": 77.7272 }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Malleshwaram",
+      "ward_no": "30",
+      "zone": "residential",
+      "center_lat": 13.0035,
+      "center_lon": 77.5710,
+      "landmarks": [
+        { "name": "Rajiv Gandhi Institute of Health Sciences", "type": "educational", "priority_boost": "P1", "lat": 13.0035, "lng": 77.5710 },
+        { "name": "Malleshwaram Market", "type": "commercial", "priority_boost": "P2", "lat": 13.0028, "lng": 77.5680 }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Rajajinagar",
+      "ward_no": "16",
+      "zone": "residential",
+      "center_lat": 12.9918,
+      "center_lon": 77.5530,
+      "landmarks": [
+        { "name": "M.S. Ramaiah Hospital", "type": "hospital", "priority_boost": "P1", "lat": 13.0013, "lng": 77.5593 },
+        { "name": "Chord Road", "type": "arterial_road", "priority_boost": "P2", "lat": 12.9918, "lng": 77.5530 }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Electronic City",
+      "ward_no": "197",
+      "zone": "industrial",
+      "center_lat": 12.8399,
+      "center_lon": 77.6770,
+      "landmarks": [
+        { "name": "Narayana Health City", "type": "hospital", "priority_boost": "P1", "lat": 12.8572, "lng": 77.6397 },
+        { "name": "Electronics City Phase 1", "type": "industrial", "priority_boost": "P2", "lat": 12.8446, "lng": 77.6602 }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Yelahanka",
+      "ward_no": "5",
+      "zone": "residential",
+      "center_lat": 13.1004,
+      "center_lon": 77.5963,
+      "landmarks": [
+        { "name": "REVA University", "type": "educational", "priority_boost": "P1", "lat": 13.1176, "lng": 77.6248 },
+        { "name": "Yelahanka New Town", "type": "residential", "priority_boost": "P3", "lat": 13.1004, "lng": 77.5963 }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Hebbal",
+      "ward_no": "6",
+      "zone": "residential",
+      "center_lat": 13.0358,
+      "center_lon": 77.5970,
+      "landmarks": [
+        { "name": "Kempegowda International Airport Road", "type": "arterial_road", "priority_boost": "P1", "lat": 13.0358, "lng": 77.5970 },
+        { "name": "Hebbal Lake", "type": "heritage", "priority_boost": "P2", "lat": 13.0445, "lng": 77.5928 }
+      ]
+    }
+  ],
+  "priority_rules": {
+    "zone_defaults": {
+      "educational": "P1",
+      "hospital": "P1",
+      "arterial_road": "P1",
+      "commercial": "P2",
+      "residential": "P2",
+      "industrial": "P3",
+      "heritage": "P2"
+    },
+    "proximity_radius_meters": 500,
+    "dedup_radius_meters": 15
+  },
+  "departments": [
+    { "id": "bbmp-roads", "name": "BBMP Roads Department", "issues": ["pothole", "road_damage", "footpath"], "sla": { "P1": 4, "P2": 24, "P3": 72, "P4": 168 }, "phone": "1533", "email": "roads@bbmp.gov.in" },
+    { "id": "bbmp-waste", "name": "BBMP Solid Waste Management", "issues": ["garbage", "waste_overflow", "illegal_dumping"], "sla": { "P1": 4, "P2": 12, "P3": 48, "P4": 72 }, "phone": "1533", "email": "swm@bbmp.gov.in" },
+    { "id": "bescom", "name": "BESCOM (Power)", "issues": ["broken_light", "power_outage", "fallen_pole"], "sla": { "P1": 2, "P2": 8, "P3": 24, "P4": 72 }, "phone": "1912", "email": "helpdesk@bescom.org" },
+    { "id": "bwssb", "name": "BWSSB (Water)", "issues": ["water_leak", "sewage_overflow", "no_water"], "sla": { "P1": 4, "P2": 12, "P3": 48, "P4": 72 }, "phone": "1916", "email": "customercare@bwssb.gov.in" },
+    { "id": "bbmp-storm", "name": "BBMP Stormwater Drains", "issues": ["flooding", "blocked_drain", "waterlogging"], "sla": { "P1": 2, "P2": 8, "P3": 24, "P4": 72 }, "phone": "080-22975650", "email": "stormwater@bbmp.gov.in" },
+    { "id": "bbmp-general", "name": "BBMP General", "issues": ["other", "encroachment", "noise"], "sla": { "P1": 8, "P2": 24, "P3": 72, "P4": 168 }, "phone": "080-22221188", "email": "info@bbmp.gov.in" }
+  ]
+}
