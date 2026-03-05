@@ -1,0 +1,369 @@
+# CivicSync AI — Frontend PRD
+> **For the frontend developer on the other laptop.**
+> The backend team is handling all API routes, database, and AI logic.
+> Your job: build all pages and UI components that call those APIs.
+
+---
+
+## Tech Stack (Frontend)
+
+| Tool | Purpose |
+|---|---|
+| Next.js 15 (App Router) | Framework — already scaffolded |
+| TypeScript | Language |
+| Tailwind CSS | Styling |
+| `react-leaflet` | Map + heatmap |
+| `lucide-react` | Icons |
+| `react-hot-toast` | Toast notifications |
+| `@supabase/supabase-js` | Auth (passkey/email) |
+| Vercel AI SDK `useObject` | AI streaming hook |
+
+Install:
+```bash
+npm install react-leaflet leaflet lucide-react react-hot-toast @supabase/supabase-js ai @ai-sdk/google zod
+npm install -D @types/leaflet
+```
+
+---
+
+## Folder Structure (Frontend owns these)
+
+```
+src/
+├── app/
+│   ├── page.tsx                  ← Landing page
+│   ├── login/page.tsx            ← Login / Signup
+│   ├── report/page.tsx           ← Photo upload + AI stream
+│   ├── dashboard/page.tsx        ← Citizen dashboard
+│   ├── map/page.tsx              ← Cluster map + heatmap
+│   ├── contact/page.tsx          ← City authorities
+│   ├── admin/page.tsx            ← Admin dashboard
+│   └── admin/login/page.tsx      ← Admin login
+├── components/
+│   ├── Navbar.tsx
+│   ├── PriorityBadge.tsx
+│   ├── ReportCard.tsx
+│   ├── StatusTimeline.tsx
+│   ├── MapView.tsx
+│   ├── UploadZone.tsx
+│   ├── TriageStream.tsx
+│   └── StatCard.tsx
+└── app/globals.css               ← Global styles
+```
+
+> **Do NOT touch:** `app/api/`, `lib/`, `knowledge/`, `supabase/`
+
+---
+
+## Design System
+
+**Color Palette:**
+```css
+--primary: #6366f1        /* Indigo */
+--primary-dark: #4f46e5
+--danger: #ef4444          /* P1 Red */
+--warning: #f59e0b         /* P2 Amber */
+--info: #3b82f6            /* P3 Blue */
+--low: #22c55e             /* P4 Green */
+--bg: #0f0f13              /* Dark background */
+--surface: rgba(255,255,255,0.05)   /* Glassmorphism card */
+--border: rgba(255,255,255,0.1)
+```
+
+**Priority Badge Colors:**
+| Priority | Color | Label |
+|---|---|---|
+| P1 | Red (`#ef4444`) | Critical |
+| P2 | Amber (`#f59e0b`) | High |
+| P3 | Blue (`#3b82f6`) | Medium |
+| P4 | Green (`#22c55e`) | Low |
+
+**Font:** Inter (Google Fonts)
+
+**Card Style (glassmorphism):**
+```css
+background: rgba(255,255,255,0.05);
+border: 1px solid rgba(255,255,255,0.1);
+border-radius: 16px;
+backdrop-filter: blur(12px);
+```
+
+---
+
+## Pages — Detailed Specs
+
+---
+
+### 1. `/` — Landing Page
+**Goal:** Convert visitors to reporters. Impressive first impression.
+
+**Sections:**
+1. **Hero** — Large headline: *"Report. Verify. Resolve."* + subtext + two CTA buttons (`Report an Issue` → `/report`, `View Map` → `/map`)
+2. **How It Works** — 3 steps with icons: Upload Photo → AI Triage → City Fixes It
+3. **Live Stats Bar** — Calls `GET /api/stats` → shows: Total Reports, Resolved Today, Avg Resolution Time, Active P1 Issues
+4. **Issue Categories** — 6 icon cards: Pothole, Garbage, Broken Light, Flooding, Water Leak, Other
+5. **Footer** — Links to /contact, /map
+
+**API Call:**
+```ts
+GET /api/stats
+// Response:
+{
+  total: number,
+  resolvedToday: number,
+  avgResolutionHours: number,
+  openP1: number
+}
+```
+
+---
+
+### 2. `/login` — Login / Signup
+**Goal:** Frictionless auth. Email once, passkey forever.
+
+**Flow:**
+1. User enters email → clicks Continue
+2. If new user: OTP sent → verified → passkey enrollment prompt
+3. If existing user: passkey prompt immediately (biometric/PIN)
+4. On success: redirect to `/report`
+
+**Implementation:**
+```ts
+import { createClient } from '@supabase/supabase-js'
+// Use supabase.auth.signInWithOtp({ email }) for email OTP
+// Use supabase.auth.signInWithPasskey() for passkey
+```
+
+**UI:** Single centered card, email input, animated state transitions between steps.
+
+---
+
+### 3. `/report` — Photo Upload + AI Triage
+**Goal:** Upload photo → see live AI analysis stream → get ticket.
+
+**Sections:**
+1. **UploadZone** — Drag & drop or click. Accepts JPG/PNG/WEBP. Shows preview on select.
+2. **GPS Status** — Small pill: `📍 Location captured` or `⚠️ Location unavailable`
+3. **TriageStream** — Appears after upload. Animated stages:
+   - `Analyzing image...`
+   - `Checking for nearby duplicates...`
+   - `Querying Bengaluru ward rules...`
+   - `Generating ticket...`
+4. **Result Card** — After stream completes:
+   - Priority badge (P1–P4)
+   - Category + icon
+   - AI Reasoning text
+   - Suggested Action
+   - Ward/Zone context
+   - If duplicate: `"⬆️ You're upvoting an existing report — 4 citizens flagged this!"`
+
+**API Call:**
+```ts
+POST /api/triage
+// Body: FormData { image: File, lat?: number, lng?: number }
+
+// Response (streamed via useObject):
+{
+  reportId: string,
+  category: "pothole" | "garbage" | "broken_light" | "flooding" | "water_leak" | "other",
+  priority: "P1" | "P2" | "P3" | "P4",
+  reasoning: string,
+  suggestedAction: string,
+  wardContext: string,
+  isDuplicate: boolean,
+  existingReportId?: string,
+  upvoteCount?: number
+}
+```
+
+**Streaming Hook:**
+```ts
+import { experimental_useObject as useObject } from 'ai/react'
+const { object, submit, isLoading } = useObject({
+  api: '/api/triage',
+  schema: TriageSchema  // import from lib/schemas.ts (backend provides this file)
+})
+```
+
+---
+
+### 4. `/dashboard` — Citizen Dashboard
+**Goal:** Citizen sees all their own reports + resolution updates.
+
+**Sections:**
+1. **Summary Bar** — My Reports: X | Resolved: X | Pending: X
+2. **Reports List** — Cards with: thumbnail, category, priority badge, status timeline, upvote count
+3. **StatusTimeline component** per card:
+   ```
+   ● Reported (Mar 5, 10:30am)
+   ● Assigned to BBMP Roads Dept
+   ● In Progress
+   ○ Resolved
+   ```
+4. **Resolution Ticket** (if status=resolved) — Green card with:
+   - Resolution proof photo
+   - `Resolved on: [date]`
+   - **Feedback form**: star rating (1–5) + optional comment + Submit button
+
+**API Calls:**
+```ts
+GET /api/reports/my          // citizen's own reports
+// Response: Report[]
+
+POST /api/reports/:id/feedback
+// Body: { rating: number, comment: string }
+```
+
+---
+
+### 5. `/map` — Cluster Map + Heatmap
+**Goal:** Show all open issues citywide. Visible to everyone.
+
+**Implementation:**
+```tsx
+// Use react-leaflet + leaflet.markercluster
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+// Dynamic import (SSR off):
+const MapView = dynamic(() => import('@/components/MapView'), { ssr: false })
+```
+
+**Features:**
+- Default: Cluster view — pins group when zoomed out
+- Toggle: Heatmap layer (intensity = upvote count)
+- Click pin: popup with category, priority badge, upvote count, "View Issue" link
+- Filter bar: Priority / Category / Status
+
+**API Call:**
+```ts
+GET /api/reports/map
+// Response:
+[{
+  id: string, lat: number, lng: number,
+  category: string, priority: string,
+  upvoteCount: number, status: string
+}]
+```
+
+---
+
+### 6. `/contact` — City Authorities
+**Goal:** Show citizens which department handles what + how to reach them.
+
+**Sections:**
+1. **Department Cards** (6 cards):
+   | Dept | Issues | Contact |
+   |---|---|---|
+   | BBMP Roads | Potholes | 1533 |
+   | BBMP Solid Waste | Garbage | 1533 |
+   | BESCOM | Broken Lights | 1912 |
+   | BWSSB | Water Leaks | 1916 |
+   | BBMP Stormwater | Flooding | 080-22975650 |
+   | General | Other | 080-22221188 |
+2. **SLA Table:**
+   | Priority | Expected Resolution |
+   |---|---|
+   | P1 Critical | 4 hours |
+   | P2 High | 24 hours |
+   | P3 Medium | 72 hours |
+   | P4 Low | 7 days |
+3. **Ward Office Finder** — text input → filters ward office address from static data
+
+> This page is **fully static** — no API calls needed.
+
+---
+
+### 7. `/admin` — Admin Dashboard
+**Goal:** Full control center for city authorities.
+
+> Protected: redirect to `/admin/login` if no `admin_auth` cookie.
+
+**Sections:**
+1. **Stats Row** — Total | Open P1 | Resolved Today | Avg Resolution Time | Duplicate Rate
+2. **Priority Queue** — P1 tickets always on top, red highlight
+3. **Filters** — Ward / Category / Status / Priority (dropdown filters)
+4. **Reports Table** — Columns: Thumbnail | Category | Priority | Ward | Upvotes | Status | Actions
+5. **Status Updater** (per row):
+   - Dropdown: `Open → Assigned → In Progress → Resolved`
+   - On `Resolved`: modal opens → upload resolution proof photo → confirm
+6. **AI Ward Summary** card — calls `GET /api/admin/ward-summary` → shows text like *"Ward 45: 12 P1 issues this week, up 40%"*
+
+**API Calls:**
+```ts
+GET /api/admin/reports          // all reports with filters
+PATCH /api/admin/reports/:id    // Body: { status, resolutionPhotoUrl? }
+GET /api/admin/stats            // dashboard stats
+GET /api/admin/ward-summary     // AI-generated text
+POST /api/upload                // resolution proof photo → returns url
+```
+
+---
+
+### 8. `/admin/login` — Admin Login
+**Simple page:**
+- Logo + "Admin Access" heading
+- Password input (single field)
+- Submit → calls `POST /api/admin/auth`
+- On success: cookie set → redirect to `/admin`
+
+```ts
+POST /api/admin/auth
+// Body: { password: string }
+// Response: { success: boolean }
+// Sets cookie: admin_auth=true (httpOnly)
+```
+
+---
+
+## Shared Components
+
+### `PriorityBadge.tsx`
+```tsx
+// Props: priority: "P1" | "P2" | "P3" | "P4"
+// Renders colored badge with label
+```
+
+### `ReportCard.tsx`
+```tsx
+// Props: report: Report
+// Thumbnail, category, priority badge, upvote count, status
+```
+
+### `StatusTimeline.tsx`
+```tsx
+// Props: events: { label: string, date: string, done: boolean }[]
+// Vertical timeline with dots
+```
+
+### `Navbar.tsx`
+```tsx
+// Links: Home | Report | Map | Contact | Dashboard
+// Show/hide based on auth state (useSession from supabase)
+```
+
+### `UploadZone.tsx`
+```tsx
+// Props: onFileSelect: (file: File) => void
+// Drag & drop + click to upload, preview image
+```
+
+---
+
+## Environment Variables Needed
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+NEXT_PUBLIC_API_BASE_URL=https://civicsync.vercel.app   # backend URL
+```
+
+> Backend team will provide the `NEXT_PUBLIC_API_BASE_URL` once deployed.
+
+---
+
+## Important Rules
+
+1. **Never call Supabase directly from frontend** for reports — always go through `/api/*` routes
+2. **Map must be dynamically imported** (`ssr: false`) — Leaflet breaks with SSR
+3. **Use `lib/schemas.ts`** (provided by backend) for all Zod types — do not redefine
+4. **All admin routes** check for `admin_auth` cookie before rendering
+5. **Commit frequently** to avoid merge conflicts — coordinate on `components/` folder
