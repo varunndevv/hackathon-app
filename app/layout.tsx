@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
+import { GlobalBackground } from "@/components/ui/global-background";
 
 export const metadata: Metadata = {
     title: "CivicSync — Report. Verify. Resolve.",
@@ -16,9 +17,15 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className="min-h-screen" style={{ background: "var(--bg)" }}>
+            <head>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+            </head>
+            <body className="min-h-screen relative" style={{ background: "var(--bg)" }}>
+                <GlobalBackground />
                 <Navbar />
-                <main>{children}</main>
+                <main className="relative z-10">{children}</main>
                 <Toaster
                     position="top-right"
                     toastOptions={{

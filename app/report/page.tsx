@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MapPin, Loader2 } from "lucide-react";
-import { experimental_useObject as useObject } from "ai/react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { TriageSchema } from "@/lib/schemas";
 import UploadZone from "@/components/UploadZone";
 import TriageStream from "@/components/TriageStream";
@@ -141,7 +141,7 @@ export default function ReportPage() {
                 {submitted && (
                     <TriageStream
                         isLoading={isLoading}
-                        result={(object as typeof TriageSchema._type) ?? null}
+                        result={(object as import("@/lib/schemas").TriageResult) ?? null}
                     />
                 )}
             </div>

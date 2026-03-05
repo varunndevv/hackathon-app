@@ -19,6 +19,7 @@ import {
     CheckCircle2,
 } from "lucide-react";
 import type { Stats } from "@/lib/schemas";
+import HeroSection from "@/components/ui/glassmorphism-trust-hero";
 
 const categories = [
     { label: "Pothole", icon: Construction, color: "#f59e0b" },
@@ -64,70 +65,9 @@ export default function LandingPage() {
     }, []);
 
     return (
-        <div className="min-h-screen" style={{ paddingTop: "64px" }}>
+        <div className="min-h-screen">
             {/* ── Hero ──────────────────────────────────────────────────────── */}
-            <section className="relative overflow-hidden px-4 pt-24 pb-20 text-center">
-                {/* Background glow blobs */}
-                <div
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
-                    style={{
-                        background:
-                            "radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)",
-                    }}
-                />
-
-                <div className="relative max-w-4xl mx-auto">
-                    <div
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6"
-                        style={{
-                            background: "rgba(99,102,241,0.15)",
-                            border: "1px solid rgba(99,102,241,0.3)",
-                            color: "#a5b4fc",
-                        }}
-                    >
-                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                        AI-Powered Civic Reporting · Bengaluru
-                    </div>
-
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-                        <span className="gradient-text">Report.</span>{" "}
-                        <span style={{ color: "rgba(255,255,255,0.9)" }}>Verify.</span>{" "}
-                        <span className="gradient-text">Resolve.</span>
-                    </h1>
-
-                    <p
-                        className="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
-                        style={{ color: "rgba(255,255,255,0.6)" }}
-                    >
-                        Snap a photo of any civic issue — potholes, broken lights, flooding.
-                        Our AI triages it instantly and routes it to the right city
-                        department.
-                    </p>
-
-                    <div className="flex flex-wrap items-center justify-center gap-4">
-                        <Link
-                            href="/report"
-                            className="flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-white transition-all duration-200 hover:scale-105 animate-pulse-glow"
-                            style={{ background: "var(--primary)" }}
-                        >
-                            <Camera className="w-5 h-5" />
-                            Report an Issue
-                            <ArrowRight className="w-4 h-4" />
-                        </Link>
-                        <Link
-                            href="/map"
-                            className="flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-200 hover:scale-105"
-                            style={{
-                                background: "rgba(255,255,255,0.07)",
-                                border: "1px solid rgba(255,255,255,0.15)",
-                                color: "#fff",
-                            }}
-                        >
-                            View Map
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <HeroSection />
 
             {/* ── Live Stats ────────────────────────────────────────────────── */}
             <section className="px-4 py-12">
